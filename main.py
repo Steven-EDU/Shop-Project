@@ -25,7 +25,7 @@ Shop = {
     "Lottery_Ticket": {"$10 Ticket": 10.0, "$100 Ticket": 100.0}
 }
 
-
+#test
 #Code For Entering Shop
 print("Welcome to Slow Way!\n")
 
