@@ -13,11 +13,6 @@ import random
 # Dictionary + Prices
 
 
-
-
-        
-
-
 # def category_logic(userNum: int, original_shop) -> dict[str, float]:
 #     shopList = list(Shop.keys())
 #     user_category = Shop[shopList[userNum - 1]]
@@ -38,8 +33,6 @@ def call_user_input() -> int:
         return 0
     else:
         return userNum
-
-
 
 def stage_1(original_shop:dict[str, dict[str, float]]):
     for i, category in enumerate(original_shop):
@@ -76,36 +69,32 @@ def purchase_sequence(total, cart, budget):
     
 
     cart, budget = shop_logic(userCategory, userItem, cart, budget)
+# Gambling function. im not sure if we're usuing user_budget or just budget
+def gambling(cart: list[str], total: float, user_budget:float)-> tuple[float, float]:
+    while "$10 Ticket" in cart or "$100 Ticket" in cart:
+        print("")
+        print("You have a ticket!! Would you like to redeem it?")
+        choice = input("Type here (Yes/No): ")
 
-def gamble():
-    if bought_item == True:
-        #GAMBLE LOOP
-        while "$10 Ticket" in cart or "$100 Ticket" in cart:
+        if choice.lower() != "yes":
+            break
+        if "$10 Ticket" in cart:
+            cart.remove("$10 Ticket")
+            random_number = random.randint(0,50)
+            total -= 10
+            user_budget += random_number
             print("")
-            print("You have a ticket!! Would you like to redeem it?")
-            choice = input("Type here (Yes/No): ")
+            print(f"Congrats! You won ${random_number} from a $10 Ticket!!")
 
-            if choice.lower() == "yes":
-                if "$10 Ticket" in cart:
-                    cart.remove("$10 Ticket")
-                    random_number = random.randint(0,50)
-                    total -= 10
-                    user_budget += random_number
-                    print("")
-                    print(f"Congrats! You won ${random_number} from a $10 Ticket!!")
+        elif "$100 Ticket" in cart:
+            cart.remove("$100 Ticket")
+            random_number = random.randint(0,500)
+            total -= 100
+            user_budget += random_number
+            print("")
+            print(f"Congrats! You won ${random_number} from a $100 Ticket!!")
+    return total, user_budget
 
-                elif "$100 Ticket" in cart:
-                    cart.remove("$100 Ticket")
-                    random_number = random.randint(0,500)
-                    total -= 100
-                    user_budget += random_number
-                    print("")
-                    print(f"Congrats! You won ${random_number} from a $100 Ticket!!")
-
-                else:
-                    break
-            else:
-                break
 def preCheckout():
     """
     item
@@ -147,7 +136,6 @@ def print_receipt(final_cart: list[str]) -> None:
     return
 
 
-
 def main() -> None:
     Shop = {
         "Snacks": {"Chips": 2.50, "Cookies": 3.20,"Pretzels": 2.48},
@@ -158,13 +146,16 @@ def main() -> None:
     total: float = 0
     cart = []
     budget = 15
-    
+
 
     print("Welcome to Slow Way!\n")
     print(f"Looks like you have a budget of ${budget}! What are you looking for today?")
 
+   
+            
     chosen_category:dict[str, float] = stage_1(Shop)
     chosen_item, item_price, budget = stage_2(chosen_category, budget)
+    cart.append(chosen_item)
     #cart, budget = check_budget(chosen_item, item_price, budget, cart)
     print_receipt(cart)
 
