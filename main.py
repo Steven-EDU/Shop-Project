@@ -11,32 +11,17 @@ import random
 
 
 # Dictionary + Prices
-Shop = {
-    "Snacks": {"Chips": 2.50, "Cookies": 3.20,"Pretzels": 2.48},
-    "Food":  {"Milk": 2.87,"Bread": 1.82,"Eggs": 3.89},
-    "Drinks": {"Water": 1.00, "Juice": 1.50, "Soda": 2.15},
-    "Lottery_Ticket": {"$10 Ticket": 10.0, "$100 Ticket": 100.0}
-}
 
 
 
 
-def print_category() -> None:
-    for i, category in enumerate(Shop):
-        print(f"[{i + 1}] {category}") # prints [number] "Item Name"
         
-def print_product(userNum: int) -> None:
-    category = category_logic(userNum)
-    print("What item would you like?")
-    print("[0] Go Back")
-    for i, item in enumerate(category):
-        print(f"[{i + 1}] ${category[item]:.2f} for {item}") #prints [number] "Item Name" for "Price"
 
 
-def category_logic(userNum: int) -> dict[str, float]:
-    shopList = list(Shop.keys())
-    user_category = Shop[shopList[userNum - 1]]
-    return user_category
+# def category_logic(userNum: int, original_shop) -> dict[str, float]:
+#     shopList = list(Shop.keys())
+#     user_category = Shop[shopList[userNum - 1]]
+#     return user_category
 
 def call_user_input() -> int:
     """
@@ -45,6 +30,7 @@ def call_user_input() -> int:
     """
     userNum = int(input("Type the number of the selection you would like to make:"))
     userNum = userNum - 1
+
     if userNum < -1 or userNum > 3:
         print("Try typing that again please!")
         call_user_input()
@@ -54,31 +40,40 @@ def call_user_input() -> int:
         return userNum
 
 
-def shop_logic(itemIndex, categoryIndex, cart: list[str], budget):
-    item_prices = list(Shop[categoryIndex].values())   # Unit 12.3  -- dict.values
-    
-    
-    if budget < item_prices[itemIndex]:
-        print(f"You can't afford that! You only have ${budget:.2f}!")
-    else:
-        budget = budget - item_prices
-        checkedItem = list(Shop[categoryIndex].keys())
-        cart.append(checkedItem[itemIndex])
-        return cart, budget
-    
-def purchase_sequence(total, cart, budget):
-    """
-    output:
-    - shop_category
 
-    """
-    #Code For Entering Shop
-    print("Welcome to Slow Way!\n")
-    print(f"Looks like you have a budget of ${user_budget}! What are you looking for today?")
-    print_category()
-    userCategory = call_user_input()
-    print_product(userCategory)
-    userItem = call_user_input()
+def stage_1(original_shop:dict[str, dict[str, float]]):
+    for i, category in enumerate(original_shop):
+        print(f"[{i + 1}] {category}") # prints [number] "Item Name"
+
+    category_index: int = call_user_input()
+    category_list = list(original_shop.keys())
+    user_cat_name = category_list[category_index]
+    user_cat_dict = original_shop[user_cat_name]
+    
+    return user_cat_dict
+
+def stage_2(category:dict[str, float], budget:float):
+    while True:
+        print("What item would you like?")
+        print("[0] Go Back")
+        for i, item in enumerate(category):
+            print(f"[{i + 1}] ${category[item]:.2f} for {item}") #prints [number] "Item Name" for "Price"
+
+        item_Index:int = call_user_input()
+        item_list = list(category.keys())
+        item_name = item_list[item_Index]
+        item_price = category[item_name]
+
+        if budget < item_price:
+            print(f"You can't afford that! You only have ${budget:.2f}!")
+        else:
+            budget = budget - item_price
+            break
+
+    return item_name, item_price, budget
+
+def purchase_sequence(total, cart, budget):  
+    
 
     cart, budget = shop_logic(userCategory, userItem, cart, budget)
 
@@ -154,14 +149,24 @@ def print_receipt(final_cart: list[str]) -> None:
 
 
 def main() -> None:
-    #Setting Variables
+    Shop = {
+        "Snacks": {"Chips": 2.50, "Cookies": 3.20,"Pretzels": 2.48},
+        "Food":  {"Milk": 2.87,"Bread": 1.82,"Eggs": 3.89},
+        "Drinks": {"Water": 1.00, "Juice": 1.50, "Soda": 2.15},
+        "Lottery_Ticket": {"$10 Ticket": 10.0, "$100 Ticket": 100.0}
+        }
     total: float = 0
     cart = []
-    user_budget = 15
-    purchase_sequence(total, cart, user_budget)
+    budget = 15
+    
 
+    print("Welcome to Slow Way!\n")
+    print(f"Looks like you have a budget of ${budget}! What are you looking for today?")
+
+    chosen_category:dict[str, float] = stage_1(Shop)
+    chosen_item, item_price, budget = stage_2(chosen_category, budget)
+    #cart, budget = check_budget(chosen_item, item_price, budget, cart)
     print_receipt(cart)
-    pass
 
 if __name__ == "__main__":
     main()
