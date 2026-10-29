@@ -33,15 +33,22 @@ def call_user_input() -> int:
         Asks user for input
         Prevents errors
     """
-    userNum = int(input("Type the number of the selection you would like to make:"))
-    userNum = userNum - 1
+    while True:
+        try:
+            userNum = int(input("Type the number of the selection you would like to make:"))
 
-    if userNum < -1 or userNum > 3:
-        print("Try typing that again please!")
-        call_user_input()
-    elif userNum == -1:
-        return 0
-    else:
+        except (ValueError, IndexError):
+            print("Try typing that again please!")
+            continue
+        
+        userNum = userNum - 1
+            
+        if userNum < -1 or userNum > 3:
+            print("Try typing that again please!")
+            continue
+
+        if userNum == -1:
+            return 0
         return userNum
 
 def stage_1(original_shop:dict[str, dict[str, float]]):
@@ -105,18 +112,15 @@ def gambling(cart: list[str], total: float, user_budget:float)-> tuple[float, fl
             print(f"Congrats! You won ${random_number} from a $100 Ticket!!")
     return total, user_budget
 
-def preCheckout():
+def preCheckout(total: float, budget: float, cart:list[str]) -> bool:
+
     """
     item
     item_prices
     user_item
     cart
     """
-
     # Pre-Checkout -- Display total and ask if they desire to shop more
-    total += item_prices[user_item]
-    user_budget = user_budget - item_prices[user_item]
-
     # Receipt
     print("")
     print("--- SHOPPING LIST ---")
@@ -124,26 +128,19 @@ def preCheckout():
         print(f"[{i + 1}] {item}")
     print("---         ---")
     print(f"Your total is ${total:.2f}")
-    print(f"You have ${user_budget:.2f} left")
+    print(f"You have ${budget:.2f} left")
     print("---------------")
-    print("Would you like to purchase something else? (Yes/No)")
-    user_input2 = input("type here: ")
-    print("")
-    if user_input2 == "no" or user_input2 == "No":
-        break
-
-def print_receipt(final_cart: list[str]) -> None:
-    print("")
-    print("--- Receipt ---")
-    for i, paid_item in enumerate(final_cart): # https://realpython.com/python-enumerate/
-        print(f"[{i + 1}] {paid_item}")
-    print("---         ---")
-    print(f"Your total is ${total:.2f}")
-    print(f"Your change is ${user_budget:.2f}")
-    print("---------------")
-
-    print("Thank you for shopping at Slow Way!!\n\n")
-    return
+ 
+    while True:
+        print("Would you like to purchase something else? (Yes/No)")
+        user_input2 = input("type here: ").lower()
+        print("")
+        if user_input2 == "no":
+            return False
+        if user_input2 == "yes":
+            return True
+        else:
+            print("Try typing that again please!")
 
 
 def main() -> None:
@@ -154,22 +151,19 @@ def main() -> None:
         "Lottery_Ticket": {"$10 Ticket": 10.0, "$100 Ticket": 100.0}
         }
     total: float = 0
-    cart = []
-    budget = 15
-
+    cart: list[str] = []
+    budget= 15.00
 
     print("Welcome to Slow Way!\n")
     print(f"Looks like you have a budget of ${budget}! What are you looking for today?")
 
-   
-            
     chosen_category:dict[str, float] = stage_1(Shop)
+    
     chosen_item, item_price, budget = stage_2(chosen_category, budget)
     cart.append(chosen_item)
     #cart, budget = check_budget(chosen_item, item_price, budget, cart)
+    
     print_receipt(cart)
 
 if __name__ == "__main__":
     main()
-
-
