@@ -8,6 +8,16 @@
 
 import random
 
+def print_receipt(cart: list, total: float, user_budget: float) -> None:
+    """Display the shopping receipt."""
+    print("")
+    print("--- Receipt ---")
+    for i, item in enumerate(cart):
+        print(f"[{i + 1}] {item}")
+    print("---         ---")
+    print(f"Your total is ${total:.2f}")
+    print(f"Your change is ${user_budget:.2f}")
+    print("---------------")
 
 
 # Dictionary + Prices
