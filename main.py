@@ -30,8 +30,7 @@ def call_user_input(num_options: int, can_go_back: bool) -> int:
     Ask the user for a menu number until they enter a valid one.
 
     num_options is how many items the menu lists, and can_go_back says
-    whether 0 ("Go Back") is a valid choice. Returns the zero-based list
-    index of their choice, or -1 if they typed 0 to go back.
+    whether 0 ("Go Back") is a valid choice.
     """
     # The first menu has nothing to go back to, so 0 is only valid when:
     if can_go_back:
@@ -52,6 +51,7 @@ def call_user_input(num_options: int, can_go_back: bool) -> int:
             print("\nThat is not an option! Try that again please!\n")
             continue
 
+        # Allows the input to be used as an index
         return user_choice - 1
 
 
@@ -60,16 +60,15 @@ def stage_1(shop_items: dict[str, dict[str, float]]) -> dict[str, float]:
     Let the user pick a store category.
 
     Returns that category's items and prices
-    None if the user went back.
     """
     for i, category in enumerate(shop_items):
         print(f"[{i + 1}] {category}")
 
     category_index: int = call_user_input(len(shop_items), False)
 
-
     category_list = list(shop_items.keys())
     category_name = category_list[category_index]
+    # Doing the logic here and returning a dictionary helps streamline future code
 
     return shop_items[category_name]
 
